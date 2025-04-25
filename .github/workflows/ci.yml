@@ -20,4 +20,5 @@ jobs :
           pip install -r PPDApp/requirements.txt
       - name : Run tests
         run : |
+          cd PPDApp
           python manage.py test
