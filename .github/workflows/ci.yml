@@ -21,7 +21,7 @@ jobs :
       - name : Run migrate
         run : |
           cd PPDApp
-          python manage.py migrate
+          python manage.py migrate --database=migrate
       - name : Run tests
         run : |
-          python manage.py test
+          python manage.py test --database=migrate
