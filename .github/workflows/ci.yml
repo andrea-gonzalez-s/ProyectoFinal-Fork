@@ -18,7 +18,10 @@ jobs :
         run : |
           python -m pip install --upgrade pip
           pip install -r PPDApp/requirements.txt
-      - name : Run tests
+      - name : Run migrate
         run : |
           cd PPDApp
+          python manage.py migrate
+      - name : Run tests
+        run : |
           python manage.py test
