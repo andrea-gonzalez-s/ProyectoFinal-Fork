@@ -8,6 +8,27 @@ on :
 jobs :
   build :
     runs-on: ubuntu-latest
+
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps :
       - uses : actions/checkout@v4
       - name : Set up Python
@@ -18,10 +39,12 @@ jobs :
         run : |
           python -m pip install --upgrade pip
           pip install -r PPDApp/requirements.txt
-      - name : Run migrate
+      - name : Apply migrate
         run : |
           cd PPDApp
-          python manage.py migrate --database=migrate
+          python manage.py migrate contenttypes
+          python manage.py migrate auth
+          python manage.py migrate
       - name : Run tests
         run : |
           python manage.py test --database=migrate
